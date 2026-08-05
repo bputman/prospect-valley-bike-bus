@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Bike Bus — Ride Together to School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #CFE7EC;
+    --sky-deep: #A9D2DA;
+    --ink: #1C2B24;
+    --ink-soft: #445048;
+    --hivis: #D6F23C;
+    --hivis-deep: #9FB824;
+    --coral: #FF6A47;
+    --paper: #FBF9F2;
+    --line-w: 4px;
+    --max: 880px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Work Sans', sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, .display {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.08;
+  }
+
+  .mono {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+  }
+
+  a { color: inherit; }
+
+  .wrap {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--coral);
+    outline-offset: 3px;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    background: linear-gradient(180deg, var(--sky) 0%, var(--sky-deep) 100%);
+    position: relative;
+    overflow: hidden;
+    padding: 72px 0 96px;
+  }
+
+  .road-marking {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 10px;
+    background-image: repeating-linear-gradient(
+      90deg, var(--paper) 0 36px, transparent 36px 64px
+    );
+    animation: roll 2.4s linear infinite;
+    opacity: 0.9;
+  }
+
+  @keyframes roll {
+    from { background-position: 0 0; }
+    to { background-position: -100px 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .road-marking { animation: none; }
+  }
+
+  .eyebrow {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--ink);
+    color: var(--hivis);
+    padding: 6px 12px;
+    border-radius: 3px;
+    margin-bottom: 22px;
+  }
+
+  .hero h1 {
+    font-size: clamp(44px, 8vw, 84px);
+    color: var(--ink);
+    max-width: 11ch;
+  }
+
+  .hero h1 span {
+    color: var(--paper);
+    -webkit-text-stroke: 2.5px var(--ink);
+    paint-order: stroke fill;
+  }
+
+  .hero-sub {
+    margin-top: 22px;
+    max-width: 46ch;
+    font-size: 18px;
+    color: var(--ink-soft);
+  }
+
+  .cta-row {
+    margin-top: 36px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 15px 26px;
+    border-radius: 3px;
+    text-decoration: none;
+    border: 2.5px solid var(--ink);
+    transition: transform 0.15s ease;
+  }
+
+  .btn:hover { transform: translateY(-2px); }
+
+  .btn-primary {
+    background: var(--coral);
+    color: var(--paper);
+    border-color: var(--coral);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+  }
+
+  /* ---------- SECTION SHELL ---------- */
+  section.block {
+    padding: 84px 0;
+    border-bottom: 1.5px solid #E3DFD1;
+  }
+
+  .kicker {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--hivis-deep);
+    margin-bottom: 10px;
+  }
+
+  .block h2 {
+    font-size: clamp(28px, 4vw, 40px);
+    max-width: 20ch;
+    margin-bottom: 20px;
+  }
+
+  .block > .wrap > p.lead {
+    max-width: 58ch;
+    font-size: 17px;
+    color: var(--ink-soft);
+    margin-bottom: 44px;
+  }
+
+  /* ---------- WHAT IS IT: 3 cards ---------- */
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  @media (max-width: 720px) {
+    .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    border-radius: 4px;
+    padding: 26px 22px;
+    box-shadow: 5px 5px 0 var(--hivis);
+  }
+
+  .card .num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--coral);
+    margin-bottom: 14px;
+  }
+
+  .card h3 {
+    font-size: 19px;
+    margin-bottom: 10px;
+  }
+
+  .card p {
+    font-size: 15px;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- ROUTE / STOPS ---------- */
+  .route {
+    position: relative;
+    padding-left: 40px;
+  }
+
+  .route::before {
+    content: "";
+    position: absolute;
+    left: 9px;
+    top: 6px;
+    bottom: 6px;
+    width: var(--line-w);
+    background-image: repeating-linear-gradient(
+      180deg, var(--ink) 0 14px, transparent 14px 24px
+    );
+  }
+
+  .stop {
+    position: relative;
+    padding-bottom: 40px;
+  }
+
+  .stop:last-child { padding-bottom: 0; }
+
+  .stop::before {
+    content: "";
+    position: absolute;
+    left: -40px;
+    top: 2px;
+    width: 22px;
+    height: 22px;
+    background: var(--hivis);
+    border: 3px solid var(--ink);
+    border-radius: 50%;
+  }
+
+  .stop-time {
+    font-size: 14px;
+    color: var(--coral);
+    margin-bottom: 4px;
+  }
+
+  .stop h3 {
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+
+  .stop p {
+    font-size: 15px;
+    color: var(--ink-soft);
+    max-width: 50ch;
+  }
+
+  .stop.final::before {
+    background: var(--coral);
+  }
+
+  /* ---------- GEAR GRID ---------- */
+  .grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+
+  @media (max-width: 720px) {
+    .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .gear-item {
+    text-align: left;
+    padding: 20px 16px;
+    background: var(--sky);
+    border-radius: 4px;
+  }
+
+  .gear-item .mono {
+    display: block;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+
+  .gear-item strong {
+    display: block;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- JOIN ---------- */
+  .join {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .join .kicker { color: var(--hivis); }
+
+  .join h2 { color: var(--paper); }
+
+  .join p.lead { color: #C7CFC9; }
+
+  .join-box {
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: 6px;
+    padding: 32px;
+    display: grid;
+    gap: 18px;
+    max-width: 520px;
+  }
+
+  .join-box .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid #E3DFD1;
+    padding-bottom: 14px;
+    font-size: 15px;
+  }
+
+  .join-box .row:last-of-type { border-bottom: none; padding-bottom: 0; }
+
+  .join-box .row span:first-child {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    letter-spacing: 0.05em;
+  }
+
+  /* ---------- FAQ ---------- */
+  details {
+    border-bottom: 1.5px solid #E3DFD1;
+    padding: 18px 0;
+  }
+
+  summary {
+    cursor: pointer;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    font-size: 16px;
+    letter-spacing: 0.02em;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  summary::-webkit-details-marker { display: none; }
+
+  summary::after {
+    content: "+";
+    font-size: 22px;
+    color: var(--coral);
+    margin-left: 12px;
+  }
+
+  details[open] summary::after { content: "–"; }
+
+  details p {
+    margin-top: 12px;
+    color: var(--ink-soft);
+    font-size: 15px;
+    max-width: 60ch;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    padding: 40px 0;
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .edit-flag {
+    background: var(--hivis);
+    color: var(--ink);
+    padding: 1px 5px;
+    border-radius: 2px;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="road-marking" aria-hidden="true"></div>
+  <div class="wrap">
+    <span class="eyebrow">Every school morning</span>
+    <h1>The bike bus is <span>rolling</span></h1>
+    <p class="hero-sub">A group of neighborhood kids and grown-ups riding bikes to school together, on a set route, at a set time. Safer than riding alone, way more fun than the car line.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#join">Join the ride</a>
+      <a class="btn btn-ghost" href="#route">See the route</a>
+    </div>
+  </div>
+</header>
+
+<section class="block">
+  <div class="wrap">
+    <p class="kicker">What it is</p>
+    <h2>One route, one time, a whole crowd of bikes</h2>
+    <p class="lead">Think of it like a school bus — except everyone's pedaling. Families join in along a fixed route at set stops, and we all ride in together as a group, led by volunteer adults.</p>
+    <div class="grid-3">
+      <div class="card">
+        <p class="num">01</p>
+        <h3>Safety in numbers</h3>
+        <p>Riding as a visible group is safer than riding solo — drivers see us coming, and adult volunteers ride at the front and back.</p>
+      </div>
+      <div class="card">
+        <p class="num">02</p>
+        <h3>Skip the car line</h3>
+        <p>No idling, no parking scramble. Kids roll straight up to the bike rack, wide awake and ready for the day.</p>
+      </div>
+      <div class="card">
+        <p class="num">03</p>
+        <h3>Genuinely fun</h3>
+        <p>Music, bubbles, decorated bikes, and friends the whole way. Most kids ask to ride again the next day.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="route">
+  <div class="wrap">
+    <p class="kicker">The route</p>
+    <h2>Four stops, one destination</h2>
+    <p class="lead">Hop on at any stop along the way — you don't need to ride the whole route to join in.</p>
+    <div class="route">
+      <div class="stop">
+        <p class="stop-time mono">7:35 AM</p>
+        <h3>[Starting point — e.g. Park &amp; Ride lot]</h3>
+        <p>[Address / cross streets]. This is where the bike bus sets off.</p>
+      </div>
+      <div class="stop">
+        <p class="stop-time mono">7:42 AM</p>
+        <h3>[Stop 2 — e.g. Elm St &amp; 5th Ave]</h3>
+        <p>[Address / landmark]. Look for the A-frame sign and the hi-vis crew.</p>
+      </div>
+      <div class="stop">
+        <p class="stop-time mono">7:48 AM</p>
+        <h3>[Stop 3 — e.g. Community Park entrance]</h3>
+        <p>[Address / landmark].</p>
+      </div>
+      <div class="stop final">
+        <p class="stop-time mono">7:55 AM</p>
+        <h3>[School Name] bike rack</h3>
+        <p>Arrival with a few minutes to spare before the bell.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <p class="kicker">What we bring</p>
+    <h2>Everyone's kept visible and rolling smoothly</h2>
+    <p class="lead">Every rider gets safety gear for the ride. Extra items on hand keep things running and fun.</p>
+    <div class="grid-4">
+      <div class="gear-item"><span class="mono">Safety</span><strong>Hi-vis vests</strong></div>
+      <div class="gear-item"><span class="mono">Safety</span><strong>Bike lights</strong></div>
+      <div class="gear-item"><span class="mono">On route</span><strong>A-frame route sign</strong></div>
+      <div class="gear-item"><span class="mono">On route</span><strong>Shared tool &amp; patch kit</strong></div>
+      <div class="gear-item"><span class="mono">Morale</span><strong>Bluetooth speaker</strong></div>
+      <div class="gear-item"><span class="mono">Morale</span><strong>Bubble machine</strong></div>
+      <div class="gear-item"><span class="mono">Morale</span><strong>Milestone stickers</strong></div>
+      <div class="gear-item"><span class="mono">Morale</span><strong>Decorated bikes</strong></div>
+    </div>
+  </div>
+</section>
+
+<section class="block">
+  <div class="wrap">
+    <p class="kicker">Questions</p>
+    <h2>Good to know before your first ride</h2>
+    <details open>
+      <summary>Do we have to ride the whole route?</summary>
+      <p>No — join at whichever stop is closest to your house and ride the rest of the way with the group.</p>
+    </details>
+    <details>
+      <summary>What if it's raining?</summary>
+      <p>[Describe your rain/weather policy here — e.g. "We ride rain or shine, just dress for it" or "Cancelled for lightning/heavy storms, watch the group chat."]</p>
+    </details>
+    <details>
+      <summary>Does a grown-up need to ride with my kid?</summary>
+      <p>[Describe your policy — e.g. minimum age to ride unaccompanied, or that a parent/guardian is welcome but not required once volunteers are aboard.]</p>
+    </details>
+    <details>
+      <summary>How do I volunteer?</summary>
+      <p>We always need extra adults riding front, middle, and back. No experience needed — just a bike, a helmet, and a hi-vis vest (we've got spares).</p>
+    </details>
+  </div>
+</section>
+
+<section class="block join" id="join">
+  <div class="wrap">
+    <p class="kicker">Join in</p>
+    <h2>Get the details before your first ride</h2>
+    <p class="lead">Reach out and we'll add you to the group chat with route updates, meeting times, and day-of changes.</p>
+    <div class="join-box">
+      <div class="row"><span>Contact</span><span>[organizer name] — [email address]</span></div>
+      <div class="row"><span>Group chat</span><span>[link to group text / app]</span></div>
+      <div class="row"><span>Rides on</span><span>[days of week]</span></div>
+      <div class="row"><span>First stop</span><span>7:35 AM · [Starting point]</span></div>
+    </div>
+    <div class="cta-row" style="margin-top:28px;">
+      <a class="btn btn-primary" href="mailto:organizer@example.com?subject=Bike%20Bus%20Sign-up">Email to join</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>The Bike Bus at [School Name] · Volunteer-run · <span class="edit-flag">Edit bracketed text before sharing</span></p>
+</footer>
+
+</body>
+</html>
