@@ -599,6 +599,18 @@
       id: "east",
       name: "East Route",
       color: "#FF6A47", // coral
+      // path = every point the LINE passes through, in order — starts out
+      // matching the stops below. Add extra [lat, lng] points wherever the
+      // street bends by right-clicking that spot on Google Maps and copying
+      // the coordinates, so the line hugs the actual road instead of
+      // cutting straight across blocks.
+      path: [
+        [39.762917, -105.114052], // Starting point
+        [39.765586, -105.115106], // Stop 2 — Bottom of the hill
+        [39.765660, -105.117782], // Stop 3 — 4-way Stop sign
+        [39.765544, -105.121317], // School is in sight
+        [39.764474, -105.122768]  // Final stop
+      ],
       stops: [
         {
           time: "7:10 - 7:15 AM",
@@ -630,6 +642,13 @@
       id: "north",
       name: "North Route",
       color: "#2E7D32", // green
+      path: [
+        [39.772871, -105.119128], // Starting point
+        [39.770241, -105.119155], // Stop 2
+        [39.769336, -105.121481], // Stop 3 - Stoplight
+        [39.765544, -105.121317], // School is in sight
+        [39.764474, -105.122768]  // Final stop
+      ],
       stops: [
         {
           time: "7:10 - 7:15 AM",
@@ -683,10 +702,13 @@
   const allCoords = [];
 
   ROUTES.forEach(route => {
-    const coords = route.stops.map(s => [s.lat, s.lng]);
-    allCoords.push(...coords);
+    // Line follows the detailed path (falls back to stop coords if no
+    // path is defined, so nothing breaks while you're filling this in).
+    const lineCoords = route.path && route.path.length ? route.path : route.stops.map(s => [s.lat, s.lng]);
+    const stopCoords = route.stops.map(s => [s.lat, s.lng]);
+    allCoords.push(...stopCoords);
 
-    const line = L.polyline(coords, {
+    const line = L.polyline(lineCoords, {
       color: route.color,
       weight: 4,
       dashArray: '2, 10',
@@ -709,7 +731,7 @@
         `);
     });
 
-    routeLayers[route.id] = { line, markers, coords };
+    routeLayers[route.id] = { line, markers, coords: stopCoords };
   });
 
   map.fitBounds(allCoords, { padding: [30, 30] });
