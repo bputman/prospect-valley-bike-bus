@@ -578,6 +578,22 @@
   // Coordinates below are placed around Prospect Valley Elementary, Wheat Ridge, CO.
   // Fine-tune each one: right-click the real spot on Google Maps and
   // click the coordinates at the top of the menu to copy the exact lat/lng.
+  const SCHOOL_IN_SITE_STOP = {
+    time: "7:25 AM",
+    title: "[Stop 4 — School is in sight]",
+    desc: "[35th Ave and Parfet St]. Join up with the other route. 👋 Hi there! ",
+    lat: 39.765544,
+    lng: -105.121317
+  }
+  const SCHOOL_FINAL_STOP = {
+    time: "7:30 AM",
+    title: "[Final Stop - School bike rack]",
+    desc: "Arrival with a few minutes to spare before the bell. 🎉 Dance party!",
+    lat: 39.764474,
+    lng: -105.122768,
+    final: true
+  }
+
   const ROUTES = [
     {
       id: "east",
@@ -585,41 +601,29 @@
       color: "#FF6A47", // coral
       stops: [
         {
-          time: "7:10 AM",
+          time: "7:10 - 7:15 AM",
           title: "[Starting point]",
           desc: "[33rd Ave and Miller St]. This is where the East route sets off, near the stop sign.",
           lat: 39.762917, 
-          lng: -105.114052
+          lng: -105.114052,
+          start: true
         },
         {
-          time: "7:13 AM",
+          time: "7:18 AM",
           title: "[Stop 2 — Bottom of the hill]",
           desc: "[35th Ave and Miller St]. Please pause at the bottom of the hill to gather!",
           lat: 39.765586, 
           lng: -105.115106
         },
         {
-          time: "7:16 AM",
+          time: "7:21 AM",
           title: "[Stop 3 — 4-way Stop sign]",
           desc: "[35th Ave and Nelson St]. Pause to check for vehicles and other joining riders!",
           lat: 39.765660,
           lng: -105.117782
         },
-        {
-          time: "7:20 AM",
-          title: "[Stop 4 — School is in sight]",
-          desc: "[35th Ave and Parfet St]. Join up with the North route.",
-          lat: 39.765544,
-          lng: -105.121317
-        },
-        {
-          time: "7:25 AM",
-          title: "School bike rack",
-          desc: "Arrival with a few minutes to spare before the bell. Dance party!",
-          lat: 39.764474, 
-          lng: -105.122768,
-          final: true
-        }
+        SCHOOL_IN_SITE_STOP,
+        SCHOOL_FINAL_STOP
       ]
     },
     {
@@ -628,34 +632,29 @@
       color: "#2E7D32", // green
       stops: [
         {
-          time: "7:07 AM",
-          title: "[Starting point — e.g. W 26th Ave & Wadsworth Blvd]",
-          desc: "[Address / cross streets]. This is where the South route sets off, along the park's southern edge.",
-          lat: 39.7495,
-          lng: -105.0825
+          time: "7:10 - 7:15 AM",
+          title: "[Starting point]",
+          desc: "[44th Ave and Oak St]. This is where the North route gathers before heading out.",
+          lat: 39.772871,
+          lng: -105.119128,
+          start: true
         },
         {
-          time: "7:40 AM",
-          title: "[Stop 2 — e.g. Garrison St & 26th Ave]",
-          desc: "[Address / landmark], near Crown Hill Park's main entrance.",
-          lat: 39.7512,
-          lng: -105.0895
+          time: "7:18 AM",
+          title: "[Stop 2]",
+          desc: "[38th Place and Oak St]",
+          lat: 39.770241,
+          lng: -105.119155
         },
         {
-          time: "7:20 AM",
-          title: "[Stop 4 — School is in sight]",
-          desc: "[35th Ave and Parfet St]. Join up with the East route.",
-          lat: 39.765544,
-          lng: -105.121317
+          time: "7:21 AM",
+          title: "[Stop 3 - Stoplight]",
+          desc: "[38th Ave and Parfet St] Gather before crossing 38th Ave.",
+          lat: 39.769336,
+          lng: -105.121481
         },
-        {
-          time: "7:25 AM",
-          title: "School bike rack",
-          desc: "Arrival with a few minutes to spare before the bell. Dance party!",
-          lat: 39.764474, 
-          lng: -105.122768,
-          final: true
-        }
+        SCHOOL_IN_SITE_STOP,
+        SCHOOL_FINAL_STOP
       ]
     }
   ];
