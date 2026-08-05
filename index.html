@@ -6,6 +6,7 @@
 <title>The Bike Bus — Ride Together to School</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
 <style>
   :root {
     --sky: #CFE7EC;
@@ -221,6 +222,116 @@
   }
 
   /* ---------- ROUTE / STOPS ---------- */
+  .route-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .route-tab {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 3px;
+    border: 2.5px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.12s ease;
+  }
+
+  .route-tab:hover { transform: translateY(-1px); }
+
+  .route-tab .dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    border: 2px solid var(--ink);
+    flex-shrink: 0;
+  }
+
+  .route-tab.active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  #route-map {
+    height: 380px;
+    width: 100%;
+    border: 2px solid var(--ink);
+    border-radius: 4px;
+    margin-bottom: 40px;
+    background: var(--sky);
+  }
+
+  .route-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .route-heading .dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 3px solid var(--ink);
+    flex-shrink: 0;
+  }
+
+  .route-heading h3 {
+    font-size: 18px;
+  }
+
+  .leaflet-popup-content-wrapper {
+    border-radius: 4px;
+    font-family: 'Work Sans', sans-serif;
+  }
+
+  .leaflet-popup-content { margin: 12px 14px; }
+
+  .popup-time {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 12px;
+    color: #FF6A47;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .popup-title {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    font-size: 15px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .popup-desc {
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  .stop-marker {
+    border: 3px solid var(--ink);
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+  }
+
+  .stop-marker.final {
+    width: 24px;
+    height: 24px;
+    border-width: 4px;
+  }
+
   .route {
     position: relative;
     padding-left: 40px;
@@ -448,33 +559,201 @@
 
 <section class="block" id="route">
   <div class="wrap">
-    <p class="kicker">The route</p>
-    <h2>Four stops, one destination</h2>
-    <p class="lead">Hop on at any stop along the way — you don't need to ride the whole route to join in.</p>
-    <div class="route">
-      <div class="stop">
-        <p class="stop-time mono">7:35 AM</p>
-        <h3>[Starting point — e.g. Park &amp; Ride lot]</h3>
-        <p>[Address / cross streets]. This is where the bike bus sets off.</p>
-      </div>
-      <div class="stop">
-        <p class="stop-time mono">7:42 AM</p>
-        <h3>[Stop 2 — e.g. Elm St &amp; 5th Ave]</h3>
-        <p>[Address / landmark]. Look for the A-frame sign and the hi-vis crew.</p>
-      </div>
-      <div class="stop">
-        <p class="stop-time mono">7:48 AM</p>
-        <h3>[Stop 3 — e.g. Community Park entrance]</h3>
-        <p>[Address / landmark].</p>
-      </div>
-      <div class="stop final">
-        <p class="stop-time mono">7:55 AM</p>
-        <h3>[School Name] bike rack</h3>
-        <p>Arrival with a few minutes to spare before the bell.</p>
-      </div>
-    </div>
+    <p class="kicker">The routes</p>
+    <h2>Pick the route closest to you</h2>
+    <p class="lead">Hop on at any stop along your route — you don't need to ride the whole thing to join in.</p>
+
+    <div class="route-tabs" id="route-tabs"><!-- populated from ROUTES below --></div>
+
+    <div id="route-map" role="img" aria-label="Map of the bike bus routes and stops"></div>
+
+    <div id="route-stops"><!-- populated from ROUTES below --></div>
   </div>
 </section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+  // ---- EDIT THIS ARRAY to set your real routes and stops ----
+  // Add or remove route objects for however many routes you have (2-4 is typical).
+  // Coordinates below are placed around Crown Hill Park, Wheat Ridge, CO — approximate,
+  // not exact addresses. Fine-tune each one: right-click the real spot on Google Maps and
+  // click the coordinates at the top of the menu to copy the exact lat/lng.
+  const ROUTES = [
+    {
+      id: "north",
+      name: "North Route",
+      color: "#FF6A47", // coral
+      stops: [
+        {
+          time: "7:35 AM",
+          title: "[Starting point — e.g. 32nd Ave & Kipling Pkwy]",
+          desc: "[Address / cross streets]. This is where the North route sets off, near the park's northwest corner.",
+          lat: 39.7633,
+          lng: -105.0993
+        },
+        {
+          time: "7:42 AM",
+          title: "[Stop 2 — e.g. Kipling Pkwy, park's west edge]",
+          desc: "[Address / landmark]. Ride south along the park's western edge; look for the A-frame sign.",
+          lat: 39.7580,
+          lng: -105.0965
+        },
+        {
+          time: "7:48 AM",
+          title: "[Stop 3 — e.g. W 26th Ave & Kipling St]",
+          desc: "[Address / landmark], near the main Crown Hill Park parking lot.",
+          lat: 39.7522,
+          lng: -105.0958
+        },
+        {
+          time: "7:55 AM",
+          title: "[School Name] bike rack",
+          desc: "Arrival with a few minutes to spare before the bell.",
+          lat: 39.7524,
+          lng: -105.0847,
+          final: true
+        }
+      ]
+    },
+    {
+      id: "south",
+      name: "South Route",
+      color: "#2E7D32", // green
+      stops: [
+        {
+          time: "7:30 AM",
+          title: "[Starting point — e.g. W 26th Ave & Wadsworth Blvd]",
+          desc: "[Address / cross streets]. This is where the South route sets off, along the park's southern edge.",
+          lat: 39.7495,
+          lng: -105.0825
+        },
+        {
+          time: "7:40 AM",
+          title: "[Stop 2 — e.g. Garrison St & 26th Ave]",
+          desc: "[Address / landmark], near Crown Hill Park's main entrance.",
+          lat: 39.7512,
+          lng: -105.0895
+        },
+        {
+          time: "7:55 AM",
+          title: "[School Name] bike rack",
+          desc: "Arrival with a few minutes to spare before the bell.",
+          lat: 39.7524,
+          lng: -105.0847,
+          final: true
+        }
+      ]
+    }
+  ];
+
+  // ---- Build tabs ----
+  const tabsEl = document.getElementById('route-tabs');
+  ROUTES.forEach((route, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'route-tab' + (i === 0 ? ' active' : '');
+    btn.dataset.routeId = route.id;
+    btn.innerHTML = `<span class="dot" style="background:${route.color}"></span>${route.name}`;
+    btn.addEventListener('click', () => selectRoute(route.id));
+    tabsEl.appendChild(btn);
+  });
+
+  // ---- Map setup ----
+  const map = L.map('route-map', { scrollWheelZoom: false });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+  // Draw every route's line + markers up front; store layers so we can
+  // dim/highlight them when a tab is clicked.
+  const routeLayers = {};
+  const allCoords = [];
+
+  ROUTES.forEach(route => {
+    const coords = route.stops.map(s => [s.lat, s.lng]);
+    allCoords.push(...coords);
+
+    const line = L.polyline(coords, {
+      color: route.color,
+      weight: 4,
+      dashArray: '2, 10',
+      lineCap: 'round'
+    }).addTo(map);
+
+    const markers = route.stops.map(stop => {
+      const icon = L.divIcon({
+        className: '',
+        html: `<div class="stop-marker${stop.final ? ' final' : ''}" style="background:${route.color}"></div>`,
+        iconSize: [stop.final ? 24 : 18, stop.final ? 24 : 18],
+        iconAnchor: [stop.final ? 12 : 9, stop.final ? 12 : 9]
+      });
+      return L.marker([stop.lat, stop.lng], { icon })
+        .addTo(map)
+        .bindPopup(`
+          <span class="popup-time" style="color:${route.color}">${route.name} · ${stop.time}</span>
+          <span class="popup-title">${stop.title}</span>
+          <span class="popup-desc">${stop.desc}</span>
+        `);
+    });
+
+    routeLayers[route.id] = { line, markers, coords };
+  });
+
+  map.fitBounds(allCoords, { padding: [30, 30] });
+
+  // ---- Timeline rendering ----
+  const stopsEl = document.getElementById('route-stops');
+
+  function renderTimeline(route) {
+    stopsEl.innerHTML = '';
+
+    const heading = document.createElement('div');
+    heading.className = 'route-heading';
+    heading.innerHTML = `<span class="dot" style="background:${route.color}"></span><h3>${route.name}</h3>`;
+    stopsEl.appendChild(heading);
+
+    const list = document.createElement('div');
+    list.className = 'route';
+    route.stops.forEach(stop => {
+      const el = document.createElement('div');
+      el.className = 'stop' + (stop.final ? ' final' : '');
+      el.innerHTML = `
+        <p class="stop-time mono" style="color:${route.color}">${stop.time}</p>
+        <h3>${stop.title}</h3>
+        <p>${stop.desc}</p>
+      `;
+      list.appendChild(el);
+    });
+    stopsEl.appendChild(list);
+  }
+
+  // ---- Selecting a route: highlight its line/markers, fade the rest ----
+  function selectRoute(routeId) {
+    ROUTES.forEach(route => {
+      const isActive = route.id === routeId;
+      const layers = routeLayers[route.id];
+      layers.line.setStyle({ opacity: isActive ? 1 : 0.25, weight: isActive ? 5 : 3 });
+      layers.markers.forEach(m => {
+        const el = m.getElement();
+        if (el) el.style.opacity = isActive ? 1 : 0.35;
+      });
+    });
+
+    document.querySelectorAll('.route-tab').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.routeId === routeId);
+    });
+
+    const route = ROUTES.find(r => r.id === routeId);
+    renderTimeline(route);
+
+    if (routeLayers[routeId].coords.length) {
+      map.fitBounds(routeLayers[routeId].coords, { padding: [40, 40] });
+    }
+  }
+
+  // Start with the first route selected
+  selectRoute(ROUTES[0].id);
+</script>
 
 <section class="block">
   <div class="wrap">
