@@ -694,6 +694,27 @@
     tabsEl.appendChild(btn);
   });
 
+  // ---- Deep-link helpers ----
+  function getRouteIdFromHash() {
+    // Expect hash like "#route=east" or just "route=east"
+    const hash = (location.hash || '').replace(/^#/, '');
+    const params = new URLSearchParams(hash);
+    return params.get('route');
+  }
+
+  function updateHashForRoute(routeId) {
+    // Use replaceState so switching routes doesn't create a long back-history.
+    const newHash = `route=${encodeURIComponent(routeId)}`;
+    history.replaceState(null, '', `#${newHash}`);
+  }
+
+  // If the user navigates back/forward or an external link changes the hash,
+  // respond by selecting the corresponding route.
+  window.addEventListener('hashchange', () => {
+    const routeId = getRouteIdFromHash();
+    if (routeId && ROUTES.find(r => r.id === routeId)) selectRoute(routeId);
+  });
+
   // ---- Map setup ----
   const map = L.map('route-map', { scrollWheelZoom: false });
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -789,10 +810,18 @@
     if (routeLayers[routeId].coords.length) {
       map.fitBounds(routeLayers[routeId].coords, { padding: [40, 40] });
     }
+
+    // Update the URL hash for deep-linking/sharing
+    updateHashForRoute(routeId);
   }
 
-  // Start with the first route selected
-  selectRoute(ROUTES[0].id);
+  // Start with the route from the hash if present, otherwise first route
+  const initialRouteId = getRouteIdFromHash();
+  if (initialRouteId && ROUTES.find(r => r.id === initialRouteId)) {
+    selectRoute(initialRouteId);
+  } else {
+    selectRoute(ROUTES[0].id);
+  }
 </script>
 
 <section class="block">
