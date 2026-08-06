@@ -788,32 +788,42 @@
     stopsEl.appendChild(list);
   }
 
-  // ---- Selecting a route: highlight its line/markers, fade the rest ----
-  function selectRoute(routeId) {
-    ROUTES.forEach(route => {
-      const isActive = route.id === routeId;
-      const layers = routeLayers[route.id];
-      layers.line.setStyle({ opacity: isActive ? 1 : 0.25, weight: isActive ? 5 : 3 });
-      layers.markers.forEach(m => {
-        const el = m.getElement();
-        if (el) el.style.opacity = isActive ? 1 : 0.35;
-      });
+// ---- Selecting a route: highlight its line/markers, fade the rest ----
+function selectRoute(routeId) {
+  ROUTES.forEach(route => {
+    const isActive = route.id === routeId;
+    const layers = routeLayers[route.id];
+
+    // style the polyline
+    layers.line.setStyle({ opacity: isActive ? 1 : 0.25, weight: isActive ? 5 : 3 });
+
+    // markers: dim inactive ones, make them non-interactive; raise active ones
+    layers.markers.forEach(m => {
+      const el = m.getElement();
+      if (el) {
+        el.style.opacity = isActive ? 1 : 0.35;
+        el.style.pointerEvents = isActive ? 'auto' : 'none'; // <-- prevents clicks on inactive markers
+      }
+      // visually bring active markers to front
+      m.setZIndexOffset(isActive ? 1000 : 0);
     });
+  });
 
-    document.querySelectorAll('.route-tab').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.routeId === routeId);
-    });
+  // update tab UI
+  document.querySelectorAll('.route-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.routeId === routeId);
+  });
 
-    const route = ROUTES.find(r => r.id === routeId);
-    renderTimeline(route);
+  const route = ROUTES.find(r => r.id === routeId);
+  renderTimeline(route);
 
-    if (routeLayers[routeId].coords.length) {
-      map.fitBounds(routeLayers[routeId].coords, { padding: [40, 40] });
-    }
-
-    // Update the URL hash for deep-linking/sharing
-    updateHashForRoute(routeId);
+  if (routeLayers[routeId].coords.length) {
+    map.fitBounds(routeLayers[routeId].coords, { padding: [40, 40] });
   }
+
+  // Update the URL hash for deep-linking/sharing
+  updateHashForRoute(routeId);
+}
 
   // Start with the route from the hash if present, otherwise first route
   const initialRouteId = getRouteIdFromHash();
