@@ -703,9 +703,21 @@
   }
 
   function updateHashForRoute(routeId) {
-    // Use replaceState so switching routes doesn't create a long back-history.
-    const newHash = `route=${encodeURIComponent(routeId)}`;
-    history.replaceState(null, '', `#${newHash}`);
+    const newHash = route=${encodeURIComponent(routeId)}; 
+    const target = #${newHash};
+    // If already at the correct hash, do nothing. 
+    if (location.hash === target) 
+      return; 
+    try {
+      // Try to replace the url without adding a history entry. 
+      history.replaceState(null, '', target); 
+      // Some environments may not immediately reflect location.hash; ensure it matches. 
+      if (location.hash !== target) 
+        location.hash = newHash; 
+    } catch (e) { 
+      // Fallback — set the hash (this creates a history entry). 
+      location.hash = newHash;
+    }
     console.log('newHash', newHash);
   }
 
