@@ -706,6 +706,7 @@
     // Use replaceState so switching routes doesn't create a long back-history.
     const newHash = `route=${encodeURIComponent(routeId)}`;
     history.replaceState(null, '', `#${newHash}`);
+    console.log('newHash', newHash);
   }
 
   // If the user navigates back/forward or an external link changes the hash,
@@ -823,6 +824,7 @@ function selectRoute(routeId) {
 
   // Update the URL hash for deep-linking/sharing
   updateHashForRoute(routeId);
+  console.log('selectRoute', routeId);
 }
 
   // Start with the route from the hash if present, otherwise first route
