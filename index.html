@@ -714,6 +714,7 @@
       ]
     }
   ];
+  let currentRouteId = null;
 
   // ---- Build tabs ----
   const tabsEl = document.getElementById('route-tabs');
@@ -835,6 +836,9 @@
 
 // ---- Selecting a route: highlight its line/markers, fade the rest ----
 function selectRoute(routeId) {
+  if (routeId === currentRouteId) return;
+
+  
   ROUTES.forEach(route => {
     const isActive = route.id === routeId;
     const layers = routeLayers[route.id];
@@ -868,7 +872,9 @@ function selectRoute(routeId) {
 
   // Update the URL hash for deep-linking/sharing
   updateHashForRoute(routeId);
-  console.log('selectRoute', routeId);
+  map.closePopup();
+  
+  currentRouteId = routeId;
 }
 
   // Start with the route from the hash if present, otherwise first route
