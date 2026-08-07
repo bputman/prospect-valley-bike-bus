@@ -735,8 +735,8 @@
   }
 
   function updateHashForRoute(routeId) {
-    const newHash = route=${encodeURIComponent(routeId)}; 
-    const target = #${newHash};
+    const newHash = `route=${encodeURIComponent(routeId)}`; 
+    const target = `#${newHash}`;
     // If already at the correct hash, do nothing. 
     if (location.hash === target) 
       return; 
