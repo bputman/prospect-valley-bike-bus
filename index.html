@@ -628,6 +628,46 @@
     final: true
   }
 
+  const south_route = {
+    id: "south",
+    name: "Potential? South Route",
+    color: "#0000FF", // blue
+    // path = every point the LINE passes through, in order — starts out
+    // matching the stops below. Add extra [lat, lng] points wherever the
+    // street bends by right-clicking that spot on Google Maps and copying
+    // the coordinates, so the line hugs the actual road instead of
+    // cutting straight across blocks.
+    path: [
+      [39.755166, -105.123634], // Starting point
+      [39.761841, -105.123608], // Turn right at 32nd Ave
+      [39.761858, -105.122895], // Preparing to cross 32nd Ave
+      [39.761994, -105.122889], // Done crossing 32nd Ave
+      [39.761996, -105.122474], // Turn left
+      [39.763736, -105.122490], // School is in sight
+      [39.764056, -105.122618], // School entrance
+      [39.764419, -105.122399], // School plaza
+      [39.764474, -105.122768]  // Final stop
+    ],
+    stops: [
+      {
+        time: "7:10 - 7:15 AM",
+        title: "TODO",
+        desc: "TODO",
+        lat: 39.755166, 
+        lng: -105.123634,
+        start: true
+      },
+      {
+        time: "7:20 AM",
+        title: "TODO",
+        desc: "TODO",
+        lat: 39.761841, 
+        lng: -105.123608
+      },
+      SCHOOL_FINAL_STOP
+    ]
+  };
+
   const ROUTES = [
     {
       id: "east",
@@ -714,7 +754,8 @@
         SCHOOL_IN_SITE_STOP,
         SCHOOL_FINAL_STOP
       ]
-    }
+    },
+    south_route
   ];
   let currentRouteId = null;
 
